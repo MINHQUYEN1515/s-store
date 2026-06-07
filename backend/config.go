@@ -3,6 +3,7 @@ package backend
 import (
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/joho/godotenv"
 )
@@ -21,10 +22,7 @@ type Config struct {
 }
 
 func LoadConfig() Config {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-	}
+	loadEnvFile()
 
 	return Config{
 		AppEnv:  os.Getenv("APP_ENV"),
@@ -37,5 +35,30 @@ func LoadConfig() Config {
 		DbName:     os.Getenv("DB_NAME"),
 		DbUser:     os.Getenv("DB_USER"),
 		DbPassword: os.Getenv("DB_PASSWORD"),
+	}
+}
+
+func loadEnvFile() {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Println("Warning: cannot get working directory, using system environment variables")
+		return
+	}
+
+	for {
+		envPath := filepath.Join(dir, ".env")
+		if _, statErr := os.Stat(envPath); statErr == nil {
+			if loadErr := godotenv.Load(envPath); loadErr != nil {
+				log.Printf("Warning: failed to load %s: %v", envPath, loadErr)
+			}
+			return
+		}
+
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			log.Println("Warning: .env file not found, using system environment variables")
+			return
+		}
+		dir = parent
 	}
 }
