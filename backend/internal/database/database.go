@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	backend "example/web-service-gin"
+	backend "s-store"
 
 	_ "github.com/go-sql-driver/mysql"
 )

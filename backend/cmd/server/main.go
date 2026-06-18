@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"log"
 
-	"example/web-service-gin"
-	"example/web-service-gin/internal/database"
-	"example/web-service-gin/internal/routes"
+	backend "s-store"
+	"s-store/internal/database"
+	"s-store/internal/migration"
+	"s-store/internal/routes"
 
 	"github.com/gin-gonic/gin"
 
@@ -19,6 +20,9 @@ func main() {
 	db, err := database.ConnectDatabase(config)
 	if err != nil {
 		log.Fatalf("Error connecting to database: %v", err)
+	}
+	if err := migration.Migrate(db); err != nil {
+		log.Fatalf("Error migrating database: %v", err)
 	}
 	defer db.Close()
 	log.Println("Connected to database successfully")

@@ -1,10 +1,15 @@
-module example/web-service-gin
+module s-store
 
 go 1.26.1
 
 require github.com/gin-gonic/gin v1.12.0
 
-require filippo.io/edwards25519 v1.2.0 // indirect
+require (
+	filippo.io/edwards25519 v1.2.0 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
+	gorm.io/gorm v1.31.1 // indirect
+)
 
 require (
 	github.com/bytedance/gopkg v0.1.3 // indirect
@@ -36,6 +41,6 @@ require (
 	golang.org/x/crypto v0.48.0 // indirect
 	golang.org/x/net v0.51.0 // indirect
 	golang.org/x/sys v0.41.0 // indirect
-	golang.org/x/text v0.34.0 // indirect
+	golang.org/x/text v0.38.0 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
 )
