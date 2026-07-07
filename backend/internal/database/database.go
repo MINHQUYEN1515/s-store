@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func ConnectDatabase(config backend.Config) (*gorm.DB, error) {
+func ConnectDataBase(config backend.Config) (*gorm.DB, error) {
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?parseTime=true",
 		config.DbUser,
@@ -20,22 +20,22 @@ func ConnectDatabase(config backend.Config) (*gorm.DB, error) {
 	)
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+
 	if err != nil {
-		return nil, fmt.Errorf("open database: %w", err)
+		return nil, fmt.Errorf("Open Database: %w", err)
+	}
+	sqlDb, err := db.DB()
+	if err != nil {
+		return nil, fmt.Errorf("Connect Database faild: %w", err)
 	}
 
-	sqlDB, err := db.DB()
-	if err != nil {
-		return nil, fmt.Errorf("get sql database: %w", err)
-	}
+	sqlDb.SetMaxOpenConns(10)
+	sqlDb.SetMaxIdleConns(5)
+	sqlDb.SetConnMaxIdleTime(time.Hour)
 
-	sqlDB.SetMaxOpenConns(10)
-	sqlDB.SetMaxIdleConns(5)
-	sqlDB.SetConnMaxLifetime(time.Hour)
-
-	if err := sqlDB.Ping(); err != nil {
-		sqlDB.Close()
-		return nil, fmt.Errorf("ping database: %w", err)
+	if err := sqlDb.Ping(); err != nil {
+		sqlDb.Close()
+		return nil, fmt.Errorf("Ping Database failed: %w", err)
 	}
 
 	return db, nil
