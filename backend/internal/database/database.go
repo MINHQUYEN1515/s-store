@@ -1,16 +1,15 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
+	backend "s-store"
 	"time"
 
-	backend "s-store"
-
-	_ "github.com/go-sql-driver/mysql"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
-func ConnectDatabase(config backend.Config) (*sql.DB, error) {
+func ConnectDatabase(config backend.Config) (*gorm.DB, error) {
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?parseTime=true",
 		config.DbUser,
@@ -20,17 +19,22 @@ func ConnectDatabase(config backend.Config) (*sql.DB, error) {
 		config.DbName,
 	)
 
-	db, err := sql.Open("mysql", dsn)
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, fmt.Errorf("open database: %w", err)
 	}
 
-	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(5)
-	db.SetConnMaxLifetime(time.Hour)
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, fmt.Errorf("get sql database: %w", err)
+	}
 
-	if err := db.Ping(); err != nil {
-		db.Close()
+	sqlDB.SetMaxOpenConns(10)
+	sqlDB.SetMaxIdleConns(5)
+	sqlDB.SetConnMaxLifetime(time.Hour)
+
+	if err := sqlDB.Ping(); err != nil {
+		sqlDB.Close()
 		return nil, fmt.Errorf("ping database: %w", err)
 	}
 

@@ -10,8 +10,6 @@ import (
 	"s-store/internal/routes"
 
 	"github.com/gin-gonic/gin"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
@@ -24,7 +22,11 @@ func main() {
 	if err := migration.Migrate(db); err != nil {
 		log.Fatalf("Error migrating database: %v", err)
 	}
-	defer db.Close()
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Fatalf("Error getting database connection: %v", err)
+	}
+	defer sqlDB.Close()
 	log.Println("Connected to database successfully")
 
 	if config.AppEnv == "production" {
