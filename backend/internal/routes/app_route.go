@@ -1,9 +1,16 @@
 package routes
 
-import "github.com/gin-gonic/gin"
+import (
+	"s-store/internal/handler"
 
-func AppRoute(r *gin.Engine) {
+	"github.com/gin-gonic/gin"
+)
+
+type RouteHandler struct {
+	AuthHandler *handler.AuthHandler
+}
+
+func AppRoute(r *gin.Engine, routeHandler *RouteHandler) {
 	appGroup := r.Group("api/v1")
-	AuthRoute(appGroup)
-
+	AuthRoute(appGroup, routeHandler.AuthHandler)
 }

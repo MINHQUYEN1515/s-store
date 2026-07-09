@@ -1,7 +1,15 @@
 package routes
 
-import "github.com/gin-gonic/gin"
+import (
+	"s-store/internal/handler"
 
-func AuthRoute(r *gin.RouterGroup) {
-	_ = r.Group("/auth")
+	"github.com/gin-gonic/gin"
+)
+
+func AuthRoute(r *gin.RouterGroup, authHandler *handler.AuthHandler) {
+	authGroup := r.Group("/auth")
+	{
+		authGroup.POST("/register", authHandler.Register)
+		authGroup.POST("/login", authHandler.Login)
+	}
 }
