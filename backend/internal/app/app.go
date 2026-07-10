@@ -66,7 +66,7 @@ func Setup() (*gin.Engine, error) {
 
 func setupDenpendencyInjection(r *gin.Engine, db *gorm.DB, config backend.Config) {
 	// Initialize repositories
-	authRepo := repository.NewAuthRepo(db)
+	authRepo := repository.UserRepoNew(db)
 
 	// Initialize services
 	authService := service.AuthServiceNew(authRepo, config.JWTKey)

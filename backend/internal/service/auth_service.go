@@ -12,7 +12,7 @@ type AuthService interface {
 }
 
 type authService struct {
-	authRepo  repository.AuthRepo
+	userRepo  repository.UserRepo
 	jwtSecret string
 }
 
@@ -26,9 +26,9 @@ func (a *authService) Register(request request.RegisterRequest) (interface{}, er
 	panic("unimplemented")
 }
 
-func AuthServiceNew(authRepo repository.AuthRepo, jwtSecret string) AuthService {
+func AuthServiceNew(authRepo repository.UserRepo, jwtSecret string) AuthService {
 	return &authService{
-		authRepo:  authRepo,
+		userRepo:  authRepo,
 		jwtSecret: jwtSecret,
 	}
 }
