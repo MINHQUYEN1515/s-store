@@ -8,12 +8,13 @@ import (
 type UserEntity struct {
 	ID        uint          `json:"id" gorm:"primaryKey;autoIncrement"`
 	Username  string        `json:"username" gorm:"type:nvarchar(100)"`
-	Email     string        `json:"email" gorm:"unique"`
+	Email     string        `json:"email" gorm:"unique,index"`
 	Url       string        `json:"url" gorm:"nvarchar(255)"`
 	Role      enum.RoleEnum `json:"role" gorm:"type:nvarchar(50)"`
 	Password  string        `json:"-"`
 	CreatedAt time.Time     `json:"created_at"`
 	UpdatedAt time.Time     `json:"updated_at"`
+	DeleteAt  time.Time     `gorm:"index" json:"-"`
 }
 
 func (UserEntity) TableName() string {
