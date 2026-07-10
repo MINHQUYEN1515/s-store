@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"log"
 	backend "s-store"
 	"s-store/internal/database"
@@ -10,6 +11,7 @@ import (
 	repository "s-store/internal/repositories"
 	"s-store/internal/routes"
 	"s-store/internal/service"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -44,10 +46,16 @@ func Setup() (*gin.Engine, error) {
 		gin.SetMode(gin.DebugMode)
 	}
 	// Initialize Gin router and set up routes
-	server := gin.Default()
+	server := gin.New()
+	if err := server.SetTrustedProxies(nil); err != nil {
+		return nil, err
+	}
 
 	// Allow CORS for all origins
 	server.Use(middleware.AllowCors())
+
+	server.Use(CustomLogger())
+	server.Use(gin.Recovery())
 
 	// Set up dependency injection for handlers and services
 	setupDenpendencyInjection(server, db, config)
@@ -66,10 +74,31 @@ func setupDenpendencyInjection(r *gin.Engine, db *gorm.DB, config backend.Config
 	// Initialize handlers
 	authHandler := handler.AuthHandlerNew(authService)
 
-	// Set up routes with handlers
-	routes.AuthRoute(&r.RouterGroup, authHandler)
-
 	routes.AppRoute(r, &routes.RouteHandler{
 		AuthHandler: authHandler,
 	})
+}
+
+func CustomLogger() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		start := time.Now()
+
+		c.Next()
+
+		latency := time.Since(start)
+		status := c.Writer.Status()
+		method := c.Request.Method
+		path := c.Request.URL.Path
+		clientIP := c.ClientIP()
+
+		fmt.Printf(
+			"[%s] %3d | %13v | %-7s %s | %s\n",
+			time.Now().Format("2006-01-02 15:04:05"),
+			status,
+			latency,
+			method,
+			path,
+			clientIP,
+		)
+	}
 }
