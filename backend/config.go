@@ -9,10 +9,13 @@ import (
 )
 
 type Config struct {
-	AppEnv  string
-	AppPort string
-	AppName string
-	JWTKey  string
+	AppEnv                 string
+	AppPort                string
+	AppName                string
+	JWTKey                 string
+	JWTKeyRefeshToken      string
+	JWEKeyExpiration       string
+	JWTKeyRefeshExpiration string
 
 	DbHost     string
 	DbPort     string
@@ -25,10 +28,13 @@ func LoadConfig() Config {
 	loadEnvFile()
 
 	return Config{
-		AppEnv:  os.Getenv("APP_ENV"),
-		AppPort: os.Getenv("APP_PORT"),
-		AppName: os.Getenv("APP_NAME"),
-		JWTKey:  os.Getenv("JWT_KEY"),
+		AppEnv:                 os.Getenv("APP_ENV"),
+		AppPort:                os.Getenv("APP_PORT"),
+		AppName:                os.Getenv("APP_NAME"),
+		JWTKey:                 os.Getenv("JWT_KEY"),
+		JWTKeyRefeshToken:      os.Getenv("JWT_KEY_REFESH_TOKEN"),
+		JWEKeyExpiration:       os.Getenv("JWE_KEY_EXPIRATION"),
+		JWTKeyRefeshExpiration: os.Getenv("JWT_KEY_REFESH_EXPIRATION"),
 
 		DbHost:     os.Getenv("DB_HOST"),
 		DbPort:     os.Getenv("DB_PORT"),

@@ -69,7 +69,7 @@ func setupDenpendencyInjection(r *gin.Engine, db *gorm.DB, config backend.Config
 	authRepo := repository.UserRepoNew(db)
 
 	// Initialize services
-	authService := service.AuthServiceNew(authRepo, config.JWTKey)
+	authService := service.AuthServiceNew(authRepo, config.JWTKey, config.JWTKeyRefeshToken)
 
 	// Initialize handlers
 	authHandler := handler.AuthHandlerNew(authService)
@@ -77,6 +77,9 @@ func setupDenpendencyInjection(r *gin.Engine, db *gorm.DB, config backend.Config
 	routes.AppRoute(r, &routes.RouteHandler{
 		AuthHandler: authHandler,
 	})
+
+	//utils
+
 }
 
 func CustomLogger() gin.HandlerFunc {
